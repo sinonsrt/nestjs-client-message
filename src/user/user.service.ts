@@ -4,6 +4,7 @@ import { ClientKafka } from '@nestjs/microservices';
 
 import { CreateUserDto, UpdateUserDto } from './dto';
 import env from '../config/env';
+import { InvalidParamError } from 'src/config/errors';
 
 @Injectable()
 export class UserService {
@@ -19,14 +20,16 @@ export class UserService {
     number,
     phone,
   }: CreateUserDto): Promise<void> {
-    if (password === confirmPassword) {
-      password = await bcrypt.hash(password, 12);
+    if (password !== confirmPassword) {
+      throw new InvalidParamError(confirmPassword);
     }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     const createUserMessage = {
       name,
       email,
-      password,
+      password: hashedPassword,
       age,
       cep,
       number,
