@@ -8,6 +8,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { AppError } from 'src/utils/errors/app-error';
 import env from '../config/env';
 import { UserRepository } from './user.repository';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -49,7 +50,7 @@ export class UserService {
   async update(
     id: number,
     { age, cep, email, name, number, phone }: UpdateUserDto,
-  ) {
+  ): Promise<void> {
     const user = await this.userRepository.findOne(id);
 
     if (!user) {
@@ -61,15 +62,17 @@ export class UserService {
     this.client.emit(env.KAFKA_UPDATE_USER_TOPIC, user);
   }
 
-  async remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number): Promise<void> {
+    await this.userRepository.delete(id);
   }
 
-  async findAll() {
-    return `This action returns all user`;
-  }
+  async findOne(id: number): Promise<User> {
+    const user = await this.userRepository.findOne(id);
 
-  async findOne(id: number) {
-    return `This action returns a #${id} user`;
+    if (!user) {
+      throw new AppError('User not found!', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
   }
 }
