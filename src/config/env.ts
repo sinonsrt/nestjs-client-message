@@ -14,4 +14,5 @@ export default {
   KAFKA_CONSUMER_GROUP_ID:
     process.env.KAFKA_CONSUMER_GROUP_ID || 'user-consumer',
   KAFKA_CREATE_USER_TOPIC: process.env.KAFKA_CREATE_USER_TOPIC || 'createUser',
+  KAFKA_UPDATE_USER_TOPIC: process.env.KAFKA_UPDATE_USER_TOPIC || 'updateUser',
 };

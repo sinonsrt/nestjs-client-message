@@ -4,6 +4,8 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import env from '../config/env';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { UserRepository } from './user.repository';
 
 @Module({
   imports: [
@@ -25,6 +27,6 @@ import env from '../config/env';
     ]),
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, UserRepository, PrismaService],
 })
 export class UserModule {}

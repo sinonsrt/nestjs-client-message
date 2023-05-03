@@ -14,5 +14,6 @@ declare namespace NodeJS {
     KAFKA_CLIENT_ID: string;
     KAFKA_CONSUMER_GROUP_ID: string;
     KAFKA_CREATE_USER_TOPIC: string;
+    KAFKA_UPDATE_USER_TOPIC: string;
   }
 }

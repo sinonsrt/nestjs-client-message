@@ -1,14 +1,21 @@
 import * as bcrypt from 'bcrypt';
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 
 import { CreateUserDto, UpdateUserDto } from './dto';
+import { InvalidParamError } from 'src/utils/errors';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { AppError } from 'src/utils/errors/app-error';
 import env from '../config/env';
-import { InvalidParamError } from 'src/config/errors';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(@Inject('USER_SERVICE') private readonly client: ClientKafka) {}
+  constructor(
+    @Inject('USER_SERVICE') private readonly client: ClientKafka,
+    private readonly prisma: PrismaService,
+    private readonly userRepository: UserRepository,
+  ) {}
 
   async create({
     name,
@@ -39,8 +46,19 @@ export class UserService {
     this.client.emit(env.KAFKA_CREATE_USER_TOPIC, createUserMessage);
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(
+    id: number,
+    { age, cep, email, name, number, phone }: UpdateUserDto,
+  ) {
+    const user = await this.userRepository.findOne(id);
+
+    if (!user) {
+      throw new AppError('User not found!', HttpStatus.NOT_FOUND);
+    }
+
+    Object.assign(user, { age, cep, email, name, number, phone });
+
+    this.client.emit(env.KAFKA_UPDATE_USER_TOPIC, user);
   }
 
   async remove(id: number) {
