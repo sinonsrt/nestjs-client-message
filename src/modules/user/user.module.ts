@@ -3,9 +3,9 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import env from '../config/env';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/shared/prisma/prisma.service';
 import { UserRepository } from './user.repository';
+import env from '../../config/env';
 
 @Module({
   imports: [

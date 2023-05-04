@@ -1,14 +1,14 @@
 import * as bcrypt from 'bcrypt';
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
+import { User } from '@prisma/client';
 
 import { CreateUserDto, UpdateUserDto } from './dto';
-import { InvalidParamError } from 'src/utils/errors';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { AppError } from 'src/utils/errors/app-error';
-import env from '../config/env';
+import { PrismaService } from 'src/shared/prisma/prisma.service';
+import { InvalidParamError } from 'src/shared/uitls/errors';
+import { AppError } from 'src/shared/uitls/errors/app-error';
 import { UserRepository } from './user.repository';
-import { User } from '@prisma/client';
+import env from '../../config/env';
 
 @Injectable()
 export class UserService {
@@ -49,7 +49,16 @@ export class UserService {
 
   async update(
     id: number,
-    { age, cep, email, name, number, phone }: UpdateUserDto,
+    {
+      age,
+      cep,
+      email,
+      name,
+      number,
+      phone,
+      confirmPassword,
+      password,
+    }: UpdateUserDto,
   ): Promise<void> {
     const user = await this.userRepository.findOne(id);
 
@@ -57,7 +66,21 @@ export class UserService {
       throw new AppError('User not found!', HttpStatus.NOT_FOUND);
     }
 
-    Object.assign(user, { age, cep, email, name, number, phone });
+    if (password !== confirmPassword) {
+      throw new InvalidParamError(confirmPassword);
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    Object.assign(user, {
+      age,
+      cep,
+      email,
+      name,
+      number,
+      phone,
+      password: hashedPassword,
+    });
 
     this.client.emit(env.KAFKA_UPDATE_USER_TOPIC, user);
   }
