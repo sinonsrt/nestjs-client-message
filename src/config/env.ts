@@ -15,4 +15,8 @@ export default {
     process.env.KAFKA_CONSUMER_GROUP_ID || 'user-consumer',
   KAFKA_CREATE_USER_TOPIC: process.env.KAFKA_CREATE_USER_TOPIC || 'createUser',
   KAFKA_UPDATE_USER_TOPIC: process.env.KAFKA_UPDATE_USER_TOPIC || 'updateUser',
+  RMQ_USER: process.env.RMQ_USER || 'admin',
+  RMQ_PASSWORD: process.env.RMQ_PASSWORD || 'admin',
+  RMQ_QUEUE: process.env.RMQ_QUEUE || 'scheduleQueue',
+  RMQ_URL: process.env.RMQ_QUEUE || 'localhost:5672',
 };

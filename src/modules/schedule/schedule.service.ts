@@ -1,26 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
-import { UpdateScheduleDto } from './dto/update-schedule.dto';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class ScheduleService {
-  create(createScheduleDto: CreateScheduleDto) {
-    return 'This action adds a new schedule';
+  constructor(
+    @Inject('SCHEDULE_SERVICE') private readonly client: ClientProxy,
+  ) {}
+
+  async create(createScheduleDto: CreateScheduleDto) {
+    console.log(this.client);
+
+    return this.client.send(
+      {
+        cmd: 'createSchedule',
+      },
+      {
+        id: 1,
+      },
+    );
   }
 
-  findAll() {
-    return `This action returns all schedule`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} schedule`;
-  }
-
-  update(id: number, updateScheduleDto: UpdateScheduleDto) {
-    return `This action updates a #${id} schedule`;
-  }
-
-  remove(id: number) {
+  async remove(id: number) {
     return `This action removes a #${id} schedule`;
   }
 }
