@@ -18,5 +18,5 @@ export default {
   RMQ_USER: process.env.RMQ_USER || 'admin',
   RMQ_PASSWORD: process.env.RMQ_PASSWORD || 'admin',
   RMQ_QUEUE: process.env.RMQ_QUEUE || 'scheduleQueue',
-  RMQ_URL: process.env.RMQ_QUEUE || 'localhost:5672',
+  RMQ_URL: process.env.RMQ_URL || 'localhost:5672',
 };

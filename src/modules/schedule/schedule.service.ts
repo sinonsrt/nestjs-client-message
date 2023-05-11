@@ -9,16 +9,7 @@ export class ScheduleService {
   ) {}
 
   async create(createScheduleDto: CreateScheduleDto) {
-    console.log(this.client);
-
-    return this.client.send(
-      {
-        cmd: 'createSchedule',
-      },
-      {
-        id: 1,
-      },
-    );
+    return this.client.emit('createSchedule', createScheduleDto);
   }
 
   async remove(id: number) {
